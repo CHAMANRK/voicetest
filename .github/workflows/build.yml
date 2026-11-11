@@ -9,17 +9,25 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
-      - uses: android-actions/setup-android@v3
+      # Android SDK ubuntu-latest runner pe pehle se installed hai (setup-android step ki zaroorat nahi)
       - uses: gradle/actions/setup-gradle@v4
         with: { gradle-version: '8.7' }
-      - name: Download openWakeWord models
+      - name: Cache wake word models
+        id: models
+        uses: actions/cache@v4
+        with:
+          path: app/src/main/assets/models
+          key: oww-models-v0.5.1-hey_jarvis
+      - name: Download openWakeWord models (only if not cached)
+        if: steps.models.outputs.cache-hit != 'true'
         run: |
           D=app/src/main/assets/models
           B=https://github.com/dscripka/openWakeWord/releases/download/v0.5.1
+          mkdir -p $D
           for f in melspectrogram.onnx embedding_model.onnx hey_jarvis_v0.1.onnx; do
             curl -fL --retry 3 -o $D/$f $B/$f
           done
-          ls -l $D
+      - run: ls -l app/src/main/assets/models
       - run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:

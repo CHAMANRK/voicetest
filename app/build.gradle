@@ -6,8 +6,20 @@ android {
         applicationId 'com.chaman.voicetest'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName '0.1'
+        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionName "0.1.1"
+    }
+    signingConfigs {
+        chaman {
+            storeFile file('chaman-test.jks')
+            storePassword 'chaman123'
+            keyAlias 'chaman'
+            keyPassword 'chaman123'
+        }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.chaman }
+        release { signingConfig signingConfigs.chaman }
     }
     androidResources { noCompress 'onnx' }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
