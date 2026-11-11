@@ -1,4 +1,5 @@
 plugins { id 'com.android.application' }
+def runNumber = Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
 android {
     namespace 'com.chaman.voicetest'
     compileSdk 34
@@ -6,8 +7,8 @@ android {
         applicationId 'com.chaman.voicetest'
         minSdk 26
         targetSdk 34
-        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
-        versionName "0.1.1"
+        versionCode runNumber
+        versionName "0.1.2"
     }
     signingConfigs {
         chaman {
